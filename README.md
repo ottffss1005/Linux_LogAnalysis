@@ -20,6 +20,10 @@
 
 ## 로그 데이터 구조
 ```
+srv/
+    shared_dir/           # 세 사용자의 공유 디렉터리(ops는 접근 권한이 없음)
+        poem.txt          # 권한 있는 사용자만 접근
+
 log_analysis/
     ubuntu/
         history.log       # ubuntu 사용자가 실행한 명령어 기록
