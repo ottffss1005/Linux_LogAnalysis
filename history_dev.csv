@@ -1,0 +1,17 @@
+cat,/srv/shared_dir/poem.txt,,cat /srv/shared_dir/poem.txt
+vi,/src/shared_dir/poem.txt,,vi /src/shared_dir/poem.txt
+ls,,,ls
+cd,/src/shared_dir,,cd /src/shared_dir
+,,,
+cat,/srv/shared_dir/poem.txt,,cat /srv/shared_dir/poem.txt
+cd,/srv/shared_dir/,,cd /srv/shared_dir/
+ls,,,ls
+ls,ll,,ls ll
+ls,l,,ls l
+ll,,,ll
+vi,/src/shared_dir/,,vi /src/shared_dir/
+,,,
+vi,poem.txt,,vi poem.txt
+exit,,,exit
+ls,,,ls
+exit,,,exit

@@ -1,0 +1,206 @@
+,,,
+sudo,apt,update,sudo apt update && sudo apt install -y openssh-server
+ssh,-b,,ssh -b
+sudo,systemctl,status,sudo systemctl status ssh
+sudo,systemctl,enable,sudo systemctl enable --not ssh
+sudo,systemctl,enable,sudo systemctl enable --now ssh
+java,-ver,,java -ver
+sudo,apt,update,sudo apt update
+uname,,,uname
+uname,-a,,uname -a
+lsb_release,-a,,lsb_release -a
+cat,/etc/os-release,,cat /etc/os-release 
+cat,/etc/issue,,cat /etc/issue
+clear,,,clear
+cat,/proc/cpuinfo,,cat /proc/cpuinfo
+su,-,,su -
+sudo,su,,sudo su
+who,,,who
+whoami,,,whoami
+sudo,su,,sudo su
+pwd,,,pwd
+sudo,-i,,sudo -i
+lsb_release,-a,,lsb_release -a
+ping,8.8.8.8,,ping 8.8.8.8
+df,-h,,df -h
+free,,,free
+clear,,,clear
+systemctl,list-units,--type=service,systemctl list-units --type=service --state=running
+systemctl,list-units,--type=service,systemctl list-units --type=service
+top,,,top
+sudo,ufw,status,sudo ufw status
+dpkg,--list,,dpkg --list
+timedatectl,,,timedatectl
+sudo,timedatectl,set-timezone,sudo timedatectl set-timezone Asia/Seoul
+timedatectl,,,timedatectl
+sudo,init,0,sudo init 0
+pwd,,,pwd
+cd,/var/www/,,cd /var/www/
+pwd,,,pwd
+cd,html,,cd html
+ls,,,ls
+xd,_,,xd _
+cd,~,,cd ~
+pwd,,,pwd
+whoami,,,whoami
+exit,,,exit
+sudo,apt,install,sudo apt install curl gnupg2 ca-certificates lsb-release ubuntu-keyring
+systemctl,,,systemctl
+sudo,apt,update,sudo apt update
+sudo,apt,install,sudo apt install nginx
+systemctl,,,systemctl
+systemctl,stop,nginx,systemctl stop nginx
+sudo,system,restart,sudo system restart nginx
+sudo,systemctl,restart,sudo systemctl restart nginx
+sudo,systemctl,status,sudo systemctl status nginx
+systemctl,reload,,systemctl reload
+systemctl,reload,nginx,systemctl reload nginx
+sudo,systemctl,start,sudo systemctl start nginx
+systemctl,reload,nginx,systemctl reload nginx
+apt,list,,apt list
+apt,list,|,apt list | grep nginx
+sudo,systemctl,status,sudo systemctl status nginx
+curl,http://127.0.0.1:80,,curl http://127.0.0.1:80
+which,nginx,,which nginx
+clear,,,clear
+sudo,apt,install,sudo apt install tree
+ls,/etc/,,ls /etc/
+clear,,,clear
+ls,/etc/n,,ls /etc/n
+ls,etc/n*,,ls etc/n*
+ls,/etc/n*,,ls /etc/n*
+clear,,,clear
+ls,etc/nginx/,,ls etc/nginx/
+ls,/etc/nginx,,ls /etc/nginx
+ls,,,ls
+ls,/etc/nginx,,ls /etc/nginx
+ls,nginx,,ls nginx
+ls,/nginx,,ls /nginx
+which,nginx,,which nginx
+ls,/usr/sbin/nginx,,ls /usr/sbin/nginx
+ls,/usr/sbin,,ls /usr/sbin
+ls,/etc/nginx,,ls /etc/nginx
+ls,/var/www/html,,ls /var/www/html
+sudo,vi,index.nginx-debian.html,sudo vi index.nginx-debian.html
+ls,/var/www,,ls /var/www
+cat,var/www/html,,cat var/www/html
+cat,/var/www/html,,cat /var/www/html
+ls,/var/,,ls /var/
+ls,/var/www/html,,ls /var/www/html
+cat,var/www/html/index.ngin-debian.html,,cat var/www/html/index.ngin-debian.html
+cat,/var/www/html/index.ngin-debian.html,,cat /var/www/html/index.ngin-debian.html
+cat,/var/www/html/index.nginx-debian.html,,cat /var/www/html/index.nginx-debian.html
+ls,-al,/var/www/html,ls -al /var/www/html
+rm,/var/www/html/.,,rm /var/www/html/.
+sudo,vi,/var/www/html/index.nginx-debian.html,sudo vi /var/www/html/index.nginx-debian.html
+claer,,,claer
+clear,,,clear
+ls,,,ls
+ls,/var/log,,ls /var/log
+clear,,,clear
+ls,/var/log/nginx,,ls /var/log/nginx
+cat,/var/log/nginx/access.log,,cat /var/log/nginx/access.log
+sudo,cat,/var/log/nginx/access,log,sudo cat /var/log/nginx/access,log
+sudo,cat,/var/log/nginx/access.log,sudo cat /var/log/nginx/access.log
+clear,,,clear
+sudo,/var/log/syslog,,sudo /var/log/syslog
+ls,/var/log/syslog,,ls /var/log/syslog
+ls,-al,/var/log/syslog,ls -al  /var/log/syslog
+sudo,cat,/var/log/syslog,sudo cat  /var/log/syslog
+clear,,,clear
+sudo,cat,/var/log/syslog,sudo cat /var/log/syslog
+clear,,,clear
+journalctl,,,journalctl
+journalctl,-u,sshd-sevice,journalctl -u sshd-sevice -f
+sudo,journalctl,-u,sudo journalctl -u ssh
+sudo,journalctl,-r,sudo journalctl -r
+sudo,journalctl,-p,sudo journalctl -p err
+HOME,,,HOME
+$HOME,,,$HOME
+echo,$HOME,,echo $HOME
+echo,$LANG,,echo $LANG
+cat,/etc/apt/sources.list,,cat /etc/apt/sources.list
+cat,/etc/apt/sources.list.d/ubuntu.sources,,cat /etc/apt/sources.list.d/ubuntu.sources
+sudo,apt,remove,sudo apt remove nginx
+ls,/etc/n*,,ls /etc/n*
+sudo,apt,autoremove,sudo apt autoremove --purge
+sudo,rm,/var/www/html,sudo rm /var/www/html
+sudo,rm,-rf,sudo rm -rf /var/www/html
+groups,,,groups
+cat,/etc/passwd,,cat /etc/passwd
+whoami,,,whoami
+groups,,,groups
+cat,/etc/group,,cat /etc/group
+clear,,,clear
+adduser,,,adduser
+sudo,adduser,user01,sudo adduser user01
+cat,/etc/passwd,,cat /etc/passwd
+clear,,,clear
+cat,/etc/,,cat /etc/
+cat,/etc/group,,cat /etc/group
+cat,/etc/group,|,cat /etc/group | grep sudo
+sudo,usermod,-aG,sudo usermod -aG sudo user01
+cat,/etc/group,|,cat /etc/group | grep sudo
+ls,,,ls
+mkdir,dir1,,mkdir dir1
+ls,,,ls 
+ll,,,ll
+cd,dir1,,cd dir1
+echo,"ubuntu에서,insert",echo "ubuntu에서 insert" >> data.txt
+ls,,,ls
+cat,data.txt,,cat data.txt
+~,,,~
+cd,~,,cd ~
+cat,/etc/passwd,|,cat /etc/passwd | grep ubuntu
+cat,/etc/group,|,cat /etc/group | grep ubuntu
+who,,,who
+cat,/etc/group,,cat /etc/group
+tail,-5,/etc/group,tail -5 /etc/group
+sudo,adduser,user03,sudo adduser user03
+sudo,adduser,user04,sudo adduser user04
+ls,/home,,ls /home
+is,user03,,is user03
+id,user04,,id user04
+tail,-5,/etc/passwd,tail -5 /etc/passwd
+sudo,groupadd,cegrp,sudo groupadd cegrp
+tail,-5,/etc/group,tail -5 /etc/group
+sudo,usermod,-g,sudo usermod -g 1004 user03
+id,user03,,id user03
+sudo,usermod,-g,sudo usermod -g cegro user04
+sudo,usermod,-g,sudo usermod -g cegrp user04
+,,,
+cat,/etc/group,},cat /etc/group } grep cegrp
+cat,/etc/group,|,cat /etc/group | grep cegrp
+group,,,group
+groups,,,groups
+sudo,apt,install,sudo apt install -y docker.io
+docker,--version,,docker --version
+docker,images,,docker images
+docker,ps,-a,docker ps -a
+sudo,usermod,-aG,sudo usermod -aG docker $USER
+docker,ps,-a,docker ps -a
+$newgrp,docker,,$newgrp docker
+newgrp,docker,,newgrp docker
+docker,ps,-a,docker ps -a
+docker,images,,docker images
+docker,pull,oracleinanutshell/oracle-xe-11g,docker pull oracleinanutshell/oracle-xe-11g
+ㅣㄴ,,,ㅣㄴ
+ls,,,ls
+~$,touch,a.txt,~$ touch a.txt b.txt
+ls,,,ls
+touch,a.txt,b.txt,touch a.txt b.txt
+ls,,,ls
+echo,"print,data",echo "print data" > c.txt
+ls,,,ls
+echo,"print,data",echo "print data" >> c.txt
+cat,c.txt,,cat c.txt
+nano,e.txt,,nano e.txt
+nano,poem.txt,,nano poem.txt
+tail,-5,poem.txt,tail -5 poem.txt
+cat,-n,poem.txt,cat -n poem.txt
+tail,-5,-n,tail -5 -n poem.txt
+tail,-n,-5,tail -n -5 poem.txt
+vi,poem.txt,,vi poem.txt
+ls,dir,,ls dir
+ls,,,ls
+vi,poem.txt,,vi poem.txt
