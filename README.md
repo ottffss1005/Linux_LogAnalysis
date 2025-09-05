@@ -81,6 +81,27 @@ awk '{cmd[$1]++} END {for(c in cmd) print cmd[c], c}' ~/log_analysis/ops/history
 * * * * * /bin/bash /home/ubuntu/log_analyze.sh
 ```
 
+
+## 📑 분석 보고서 예시
+- ~/log_analysis/summary/comparison_report.txt
+
+```
+===== 2025-09-05 14:20:00 Summary =====
+User: ubuntu
+  Permission denied attempts: 0
+  Top commands:
+    12 ls
+    7 cat
+    3 echo
+
+User: dev
+  Permission denied attempts: 1
+  Top commands:
+    5 cat
+    2 less
+    1 ls
+
+```
 ---
 
 ## 🛡️ **고급 권한 거부 추적 (auditd 활용)**
