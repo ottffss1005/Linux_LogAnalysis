@@ -12,7 +12,6 @@
 ## ✅ **프로젝트 개요**
 - Linux 서버에서 여러 사용자를 생성하고, 권한을 다르게 설정하여 명령어 실행 기록과 파일접근 (permisson denied) 기록을 관리
 - 사용자별 로그(history, Permission denied)를 수집하고 분석
-- 실제 서버 운영 환경에서 보안 로그 관리
 
 ### **주요 목표**
 ✔️ 사용자별 명령어 실행 기록(`history`)과 Permission denied 이벤트 수집  
