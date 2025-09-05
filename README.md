@@ -1,7 +1,7 @@
 # Linux 사용자별 로그 수집 및 분석 프로젝트
 
 ## 프로젝트 목표
-- Linux 서버에서 여러 사용자를 생성하고, 권한을 다르게 설정하여 파일 접근과 명령어 실행 기록을 관리
+- Linux 서버에서 여러 사용자를 생성하고, 권한을 다르게 설정하여 명령어 실행 기록과 파일접근 (permisson denied) 기록을 관리
 - 사용자별 로그(history, Permission denied)를 수집하고 분석
 - 권한이 없는 접근 시도 발생 시 Slack 알림 발송
 - cron과 awk를 활용하여 자동화
@@ -40,7 +40,7 @@ log_analysis/
 
 ## 로그 분석 명령어 예시
 
-### Permission denied 로그 수집
+### 1. 인증 로그 수집
 ```
 sudo grep "Permission denied" /var/log/auth.log | grep "ubuntu" > ~/log_analysis/ubuntu/denied.log
 sudo grep "Permission denied" /var/log/auth.log | grep "dev" > ~/log_analysis/dev/denied.log
@@ -60,8 +60,65 @@ awk '{cmd[$1]++} END {for(c in cmd) print cmd[c], c}' ~/log_analysis/ops/history
 * * * * * /bin/bash /home/ubuntu/log_analyze.sh
 ```
 
-## 요약
-- log_analysis/ 디렉토리 아래 사용자별로 history와 denied 로그를 저장
-- awk로 로그를 분석하여 명령어 빈도와 denied 횟수를 집계
-- cron으로 주기적인 자동 수집 및 분석 수행
+---
+
+### 2. 파일접근 로그 수집
+
+### auditd 설치 및 활성화
+
+```bash
+sudo apt update
+sudo apt install auditd audispd-plugins -y
+sudo systemctl enable --now auditd
+```
+
+* `auditd`: 커널에서 발생하는 시스템 콜 이벤트를 기록하는 데몬
+* `audispd-plugins`: audit 로그를 외부로 전달하거나 가공할 수 있는 플러그인 모음
+
+### 규칙 설정 (Permission denied 추적)
+
+```bash
+sudo auditctl -a always,exit -F arch=b64 -S open,openat,creat \
+              -F exit=-EACCES -F auid=1001 -k denied-all
+```
+
+* `-a always,exit` : 시스템 콜 종료 시점에 항상 기록
+* `-S open,openat,creat` : 파일 열기/생성 관련 syscall 감시
+* `-F exit=-EACCES` : 권한 거부(`Permission denied`) 된 경우만
+* `-F auid=1001` : `user01` 사용자만 추적
+* `-k denied-all` : 로그 검색 키워드
+
+
+### 로그 파싱
+
+```bash
+sudo ausearch -ua ops -k denied-all -i | awk -v RS="----" '
+/type=PROCTITLE/ {
+    if (match($0, /proctitle=(.*)/, p)) {
+        cmd = p[1]
+        gsub(/^ +| +$/, "", cmd)
+        print strftime("%Y-%m-%d %H:%M:%S"), "| user=ops | cmd=\"" cmd "\" | result=Permission denied"
+    }
+}'
+```
+
+* `ausearch`: audit 로그 검색 툴
+* `-ua ops`: ops의 이벤트만
+* `-k denied-all`: 지정한 규칙 키만
+* `-i`: 사람이 읽기 좋은 포맷
+* `awk`: 각 블록에서 `proctitle` → 실행한 명령어 복원
+
+출력 예시:
+<img width="1587" height="189" alt="image" src="https://github.com/user-attachments/assets/efcece54-839c-4f66-ad17-93924bcd03ba" />
+```
+2025-09-05 14:09:16 | user=ops | cmd="cat /etc/shadow"{생략} | result=Permission denied
+```
+
+---
+
+## 트러블 슈팅
+
+
+
+
 
