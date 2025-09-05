@@ -158,7 +158,7 @@ sudo ausearch -ua ops -k denied-all -i | awk -v RS="----" '
 ---
 
 ## 📢 **Slack 알림 연동**
-- `auditd` 로그 또는 `grep` 결과에서 **Permission denied 이벤트** 확인 시 Slack Webhook 호출
+- `auditd` 로그 결과에서 **Permission denied 이벤트** 확인 시 Slack Webhook 호출
 `/usr/local/bin/denied_to_slack.sh` 실행
 
 ```bash
