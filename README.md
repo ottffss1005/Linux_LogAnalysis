@@ -4,7 +4,7 @@
 
 | Name | GitHub |
 |------|--------|
-| <img src="https://github.com/githubID1.png" width="100"/> <br>  | [@githubID1](https://github.com/githubID1) |
+| <img src="https://github.com/hyewon8245.png" width="100"/> <br>  | [@hyewon8245](https://github.com/githubID1) |
 | <img src="https://github.com/ottffss1005.png" width="100"/> <br>  | [@ottffss1005](https://github.com/ottffss1005) |
 
 ---
