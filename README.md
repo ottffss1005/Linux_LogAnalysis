@@ -1,11 +1,22 @@
 # Linux 사용자별 로그 수집 및 분석 프로젝트
 
 ## 👥 Team Members
-
-| Name | GitHub |
-|------|--------|
-| <img src="https://github.com/hyewon8245.png" width="100"/> <br>  | [@hyewon8245](https://github.com/githubID1) |
-| <img src="https://github.com/ottffss1005.png" width="100"/> <br>  | [@ottffss1005](https://github.com/ottffss1005) |
+<table>
+  <tr>
+    <th>최소영</th>
+    <th>홍혜원</th>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="https://github.com/ottffss1005.png" width="120" /><br/>
+      <a href="https://github.com/ottffss1005">@ottffss1005</a>
+    </td>
+    <td align="center">
+      <img src="https://github.com/hyewon8245.png" width="120" /><br/>
+      <a href="https://github.com/hyewon8245">@hyewon8245</a>
+    </td>
+  </tr>
+</table>
 
 ---
 
