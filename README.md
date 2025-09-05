@@ -109,7 +109,8 @@ sudo ausearch -ua ops -k denied-all -i | awk -v RS="----" '
 * `awk`: 각 블록에서 `proctitle` → 실행한 명령어 복원
 
 출력 예시:
-<img width="1587" height="189" alt="image" src="https://github.com/user-attachments/assets/efcece54-839c-4f66-ad17-93924bcd03ba" />
+<img width="1587" height="189" alt="image" src="https://github.com/user-attachments/assets/7455feb0-d298-4b9b-97aa-87adadf6bce9" />
+
 ```
 2025-09-05 14:09:16 | user=ops | cmd="cat /etc/shadow"{생략} | result=Permission denied
 ```
