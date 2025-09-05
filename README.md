@@ -1,96 +1,109 @@
 # Linux 사용자별 로그 수집 및 분석 프로젝트
 
-## 프로젝트 목표
-- Linux 서버에서 여러 사용자를 생성하고, 권한을 다르게 설정하여 명령어 실행 기록과 파일접근 (permisson denied) 기록을 관리
-- 사용자별 로그(history, Permission denied)를 수집하고 분석
-- 권한이 없는 접근 시도 발생 시 Slack 알림 발송
-- cron과 awk를 활용하여 자동화
+## 👥 Team Members
+
+| Name | GitHub |
+|------|--------|
+| <img src="https://github.com/githubID1.png" width="100"/> <br>  | [@githubID1](https://github.com/githubID1) |
+| <img src="https://github.com/ottffss1005.png" width="100"/> <br>  | [@ottffss1005](https://github.com/ottffss1005) |
 
 ---
 
-## 사용자 및 권한 설정
+## ✅ **프로젝트 개요**
+- Linux 서버에서 여러 사용자를 생성하고, 권한을 다르게 설정하여 명령어 실행 기록과 파일접근 (permisson denied) 기록을 관리
+- 사용자별 로그(history, Permission denied)를 수집하고 분석
+- 실제 서버 운영 환경에서 보안 로그 관리
 
-| 사용자  | 권한                      | 설명 |
-|---------|---------------------------|------|
-| ubuntu  | 읽기 + 쓰기               | 공유 파일 접근 및 수정 가능 |
-| dev     | 읽기만                   | 공유 파일 읽기만 가능 |
-| ops     | 접근 불가                | 공유 파일에 접근 불가 |
+### **주요 목표**
+✔️ 사용자별 명령어 실행 기록(`history`)과 Permission denied 이벤트 수집  
+✔️ 로그 자동 분석  
+✔️ Slack 알림을 통해 보안 이벤트 실시간 통보  
+✔️ cron을 활용한 자동화 및 스케줄링  
+✔️ auditd로 권한 거부 이벤트 추적 (커널 레벨 보안 로그)  
 
+---
 
-
-## 로그 데이터 구조
+## 📂 **프로젝트 디렉토리 구조**
 ```
 srv/
-    shared_dir/           # 세 사용자의 공유 디렉터리(ops는 접근 권한이 없음)
-        poem.txt          # 권한 있는 사용자만 접근
+    shared_dir/                # 공유 디렉터리 (ops는 접근 불가)
+        poem.txt               # 테스트용 파일
 
 log_analysis/
     ubuntu/
-        history.log       # ubuntu 사용자가 실행한 명령어 기록
-        denied.log        # ubuntu의 Permission denied 로그
+        history.log            # ubuntu 사용자의 명령어 로그
+        denied.log             # ubuntu의 Permission denied 로그
     dev/
-        history.log       # dev 사용자가 실행한 명령어 기록
-        denied.log        # dev의 Permission denied 로그
+        history.log
+        denied.log
     ops/
-        history.log       # ops 사용자가 실행한 명령어 기록
-        denied.log        # ops의 Permission denied 로그
+        history.log
+        denied.log
     summary/
         comparison_report.txt  # 사용자별 denied 횟수, top 명령어 집계
 ```
 
-## 로그 분석 명령어 예시
+---
 
-### 1. 인증 로그 수집
-```
+## 👤 **사용자 및 권한 정책**
+| 사용자  | 권한            | 설명                                |
+|---------|-----------------|-----------------------------------|
+| **ubuntu** | 읽기 + 쓰기       | 공유 파일 접근 및 수정 가능           |
+| **dev**    | 읽기만           | 공유 파일 읽기만 가능                |
+| **ops**    | 접근 불가        | 공유 파일 접근 시 Permission denied 발생 |
+
+---
+
+## 🔍 **로그 수집 및 분석**
+
+### **1. Permission Denied 로그 수집**
+`/var/log/auth.log` 기반으로 사용자별 denied 로그를 추출:
+```bash
 sudo grep "Permission denied" /var/log/auth.log | grep "ubuntu" > ~/log_analysis/ubuntu/denied.log
 sudo grep "Permission denied" /var/log/auth.log | grep "dev" > ~/log_analysis/dev/denied.log
 sudo grep "Permission denied" /var/log/auth.log | grep "ops" > ~/log_analysis/ops/denied.log
 ```
 
-### Top 명령어 집계 (awk 활용)
-```
+---
+
+### **2. Top 명령어 집계 (awk 활용)**
+```bash
 awk '{cmd[$1]++} END {for(c in cmd) print cmd[c], c}' ~/log_analysis/ubuntu/history.log > ~/log_analysis/summary/ubuntu_summary.txt
 awk '{cmd[$1]++} END {for(c in cmd) print cmd[c], c}' ~/log_analysis/dev/history.log > ~/log_analysis/summary/dev_summary.txt
 awk '{cmd[$1]++} END {for(c in cmd) print cmd[c], c}' ~/log_analysis/ops/history.log > ~/log_analysis/summary/ops_summary.txt
 ```
 
-### cron 예시 (1분마다 자동 수집/분석)
-```
+---
+
+### **3. cron을 활용한 자동화**
+1분마다 로그 수집 및 분석 실행:
+```bash
 * * * * * /bin/bash /home/ubuntu/log_collect.sh
 * * * * * /bin/bash /home/ubuntu/log_analyze.sh
 ```
 
 ---
 
-### 2. 파일접근 로그 수집
+## 🛡️ **고급 권한 거부 추적 (auditd 활용)**
 
-### auditd 설치 및 활성화
-
+### **auditd 설치 및 활성화**
 ```bash
 sudo apt update
 sudo apt install auditd audispd-plugins -y
 sudo systemctl enable --now auditd
 ```
 
-* `auditd`: 커널에서 발생하는 시스템 콜 이벤트를 기록하는 데몬
-* `audispd-plugins`: audit 로그를 외부로 전달하거나 가공할 수 있는 플러그인 모음
-
-### 규칙 설정 (Permission denied 추적)
-
+#### **규칙 추가 (Permission denied 이벤트 추적)**
 ```bash
-sudo auditctl -a always,exit -F arch=b64 -S open,openat,creat \
-              -F exit=-EACCES -F auid=1001 -k denied-all
+sudo auditctl -a always,exit -F arch=b64 -S open,openat,creat               -F exit=-EACCES -F auid=1001 -k denied-all
 ```
+- `-a always,exit`: 시스템 콜 종료 시점에 기록  
+- `-F exit=-EACCES`: 권한 거부(`Permission denied`)만 기록  
+- `-k denied-all`: 검색 키워드 지정  
 
-* `-a always,exit` : 시스템 콜 종료 시점에 항상 기록
-* `-S open,openat,creat` : 파일 열기/생성 관련 syscall 감시
-* `-F exit=-EACCES` : 권한 거부(`Permission denied`) 된 경우만
-* `-F auid=1001` : `user01` 사용자만 추적
-* `-k denied-all` : 로그 검색 키워드
+---
 
-
-### 로그 파싱
-
+### **로그 파싱 (ausearch + awk)**
 ```bash
 sudo ausearch -ua ops -k denied-all -i | awk -v RS="----" '
 /type=PROCTITLE/ {
@@ -102,22 +115,35 @@ sudo ausearch -ua ops -k denied-all -i | awk -v RS="----" '
 }'
 ```
 
-* `ausearch`: audit 로그 검색 툴
-* `-ua ops`: ops의 이벤트만
-* `-k denied-all`: 지정한 규칙 키만
-* `-i`: 사람이 읽기 좋은 포맷
-* `awk`: 각 블록에서 `proctitle` → 실행한 명령어 복원
-
-출력 예시:
-<img width="1587" height="189" alt="image" src="https://github.com/user-attachments/assets/7455feb0-d298-4b9b-97aa-87adadf6bce9" />
-
+✅ 출력 예시:
 ```
-2025-09-05 14:09:16 | user=ops | cmd="cat /etc/shadow"{생략} | result=Permission denied
+2025-09-05 14:09:16 | user=ops | cmd="cat /etc/shadow" | result=Permission denied
 ```
 
 ---
 
-## 트러블 슈팅
+## 📢 **Slack 알림 연동**
+- `auditd` 로그 또는 `grep` 결과에서 **Permission denied 이벤트** 감지 시 Slack Webhook 호출
+- `curl`을 이용한 간단한 구현:
+```bash
+curl -X POST -H 'Content-type: application/json' --data '{"text":"[ALERT] ops 사용자가 /srv/shared_dir/poem.txt 접근 시도 → Permission denied"}' https://hooks.slack.com/services/XXXX/YYYY/ZZZZ
+```
+
+---
+
+## 🛠️ **트러블슈팅**
+### ❗ 문제: 다른 사용자 로그가 보이지 않음
+- **원인**: `auth.log`에는 일부 인증 관련 로그만 남고, 파일 접근 실패는 기록되지 않음
+- **해결**: `auditd`를 설치하여 커널 레벨에서 권한 거부 이벤트 추적
+
+설정 예시:
+```bash
+sudo apt install auditd -y
+sudo auditctl -w /shared_dir/poem.txt -p rwxa -k denied_test
+ausearch -k denied_test
+```
+---
+
 
 
 
