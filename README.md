@@ -166,7 +166,7 @@ sudo ausearch -ua ops -k denied-all -i | awk -v RS="----" '
 
 WEBHOOK_URL="https://hooks.slack.com/services/XXXXX/XXXXX/XXXXXXXX"
 
-LOGS=$(sudo /usr/sbin/ausearch -ua user01 -k denied-all -i | \
+LOGS=$(sudo /usr/sbin/ausearch -ua ops -k denied-all -i | \
 /usr/bin/awk -v RS="----" '
 /type=PROCTITLE/ {
     if (match($0, /proctitle=(.*)/, p)) {
