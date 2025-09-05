@@ -116,6 +116,10 @@ sudo ausearch -ua ops -k denied-all -i | awk -v RS="----" '
 ```
 
 ✅ 출력 예시:
+
+<img width="1587" height="189" alt="image" src="https://github.com/user-attachments/assets/88e27f0f-a5fb-4a01-a220-36ea92dc6f6d" />
+
+
 ```
 2025-09-05 14:09:16 | user=ops | cmd="cat /etc/shadow" | result=Permission denied
 ```
@@ -123,11 +127,32 @@ sudo ausearch -ua ops -k denied-all -i | awk -v RS="----" '
 ---
 
 ## 📢 **Slack 알림 연동**
-- `auditd` 로그 또는 `grep` 결과에서 **Permission denied 이벤트** 감지 시 Slack Webhook 호출
-- `curl`을 이용한 간단한 구현:
+- `auditd` 로그 또는 `grep` 결과에서 **Permission denied 이벤트** 확인 시 Slack Webhook 호출
+`/usr/local/bin/denied_to_slack.sh` 실행
+
 ```bash
-curl -X POST -H 'Content-type: application/json' --data '{"text":"[ALERT] ops 사용자가 /srv/shared_dir/poem.txt 접근 시도 → Permission denied"}' https://hooks.slack.com/services/XXXX/YYYY/ZZZZ
+#!/bin/bash
+
+WEBHOOK_URL="https://hooks.slack.com/services/XXXXX/XXXXX/XXXXXXXX"
+
+LOGS=$(sudo /usr/sbin/ausearch -ua user01 -k denied-all -i | \
+/usr/bin/awk -v RS="----" '
+/type=PROCTITLE/ {
+    if (match($0, /proctitle=(.*)/, p)) {
+        cmd = p[1]
+        gsub(/^ +| +$/, "", cmd)
+        print strftime("%Y-%m-%d %H:%M:%S"), "| user=user01 | cmd=\"" cmd "\" | result=Permission denied"
+    }
+}')
+
+if [ -n "$LOGS" ]; then
+  PAYLOAD=$(echo "$LOGS" | /usr/bin/jq -Rs .)
+  /usr/bin/curl -s -X POST -H 'Content-type: application/json' \
+       --data "{\"text\": $PAYLOAD}" \
+       "$WEBHOOK_URL"
+fi
 ```
+<img width="1292" height="280" alt="image" src="https://github.com/user-attachments/assets/41fa66b9-60c1-48b8-9bfc-f4cee309cf46" />
 
 ---
 
