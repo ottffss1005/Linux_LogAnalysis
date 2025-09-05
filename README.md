@@ -136,7 +136,7 @@ sudo auditctl -a always,exit -F arch=b64 -S open,openat,creat               -F e
 
 ### **로그 파싱 (ausearch + awk)**
 ```bash
-sudo ausearch -ua ops -k denied-all -i | awk -v RS="----" '
+sudo ausearch -ua user01 -k denied-all -i | awk -v RS="----" '
 /type=PROCTITLE/ {
     if (match($0, /proctitle=(.*)/, p)) {
         cmd = p[1]
@@ -152,7 +152,7 @@ sudo ausearch -ua ops -k denied-all -i | awk -v RS="----" '
 
 
 ```
-2025-09-05 14:09:16 | user=ops | cmd="cat /etc/shadow" | result=Permission denied
+2025-09-05 14:09:16 | user=user01 | cmd="cat /etc/shadow" | result=Permission denied
 ```
 
 ---
@@ -166,7 +166,7 @@ sudo ausearch -ua ops -k denied-all -i | awk -v RS="----" '
 
 WEBHOOK_URL="https://hooks.slack.com/services/XXXXX/XXXXX/XXXXXXXX"
 
-LOGS=$(sudo /usr/sbin/ausearch -ua ops -k denied-all -i | \
+LOGS=$(sudo /usr/sbin/ausearch -ua user01 -k denied-all -i | \
 /usr/bin/awk -v RS="----" '
 /type=PROCTITLE/ {
     if (match($0, /proctitle=(.*)/, p)) {
