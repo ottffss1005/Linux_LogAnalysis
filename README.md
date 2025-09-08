@@ -58,8 +58,8 @@ log_analysis/
 ## 👤 **사용자 및 권한 정책**
 | 사용자  | 권한            | 설명                                |
 |---------|-----------------|-----------------------------------|
-| **ubuntu** | 읽기 + 쓰기       | 공유 파일 접근 및 수정 가능           |
-| **dev**    | 읽기만           | 공유 파일 읽기만 가능                |
+| **ubuntu** | 읽기 쓰기       | 공유 파일 접근 및 수정 가능           |
+| **dev**    | 읽기           | 공유 파일 읽기만 가능                |
 | **ops,user01**    | 접근 불가        | 공유 파일 접근 시 Permission denied 발생 |
 
 ---
@@ -125,8 +125,9 @@ sudo systemctl enable --now auditd
 ```
 
 #### **규칙 추가 (Permission denied 이벤트 추적)**
+
 ```bash
-sudo auditctl -a always,exit -F arch=b64 -S open,openat,creat               -F exit=-EACCES -F auid=1001 -k denied-all
+sudo auditctl -a always,exit -F arch=b64 -S open,openat,creat -F exit=-EACCES -F auid=1001 -k denied-all
 ```
 - `-a always,exit`: 시스템 콜 종료 시점에 기록  
 - `-F exit=-EACCES`: 권한 거부(`Permission denied`)만 기록  
