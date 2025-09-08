@@ -116,7 +116,7 @@ User: dev
 ---
 
 ## 🛡️ **고급 권한 거부 추적 (auditd 활용)**
-- 특정 사용자가 5번이상 권한 밖의 행위를 한 경우에 모니터링 알람 구축
+- 특정 사용자가 5번이상 권한 밖의 행위를 한 경우에 **모니터링 알람 구축**
 
 ### **auditd 설치 및 활성화**
 ```bash
@@ -267,6 +267,10 @@ done
 
 
 ### systemd 서비스 등록
+```bash
+sudo nano /etc/systemd/system/auditd-slack.service
+
+```
 
 ```
 [Unit]
@@ -286,7 +290,7 @@ WantedBy=multi-user.target
 ```bash
 sudo systemctl daemon-reload
 sudo systemctl enable --now auditd-slack.service
-journalctl -u auditd-slack.service -f
+sudo journalctl -u auditd-slack.service -f
 
 ```
 
