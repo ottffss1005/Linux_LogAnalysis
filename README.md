@@ -1,4 +1,4 @@
-# Linux 사용자별 로그 수집 및 분석 프로젝트
+# 운영 시스템(Linux) 사용자별 로그 수집 및 분석 프로젝트
 
 ## 👥 Team Members
 <table>
