@@ -116,6 +116,7 @@ User: dev
 ---
 
 ## 🛡️ **고급 권한 거부 추적 (auditd 활용)**
+- 특정 사용자가 5번이상 권한 밖의 행위를 한 경우에 모니터링 알람 구축
 
 ### **auditd 설치 및 활성화**
 ```bash
@@ -159,6 +160,7 @@ sudo ausearch -ua user01 -k denied-all -i | awk -v RS="----" '
 ---
 
 ## 📢 **Slack 알림 연동**
+### 9/5 기록 ###
 - `auditd` 로그 결과에서 **Permission denied 이벤트** 확인 시 Slack Webhook 호출
 `/usr/local/bin/denied_to_slack.sh` 실행
 
@@ -188,6 +190,111 @@ fi
 
 ---
 
+### 9/8 기록 ###
+실제 요구사항은 **실시간 알림**이었으므로 `tail` 기반 방식으로 전환
+### 🔹 ausearch 방식 (초기 시도)
+
+```bash
+ausearch -ua user01 -k denied-all -i
+
+```
+
+- audit 로그를 **질의**하여 이벤트 수집
+- cron을 활용해서 정기적인 보고서를 작성하고자 하였으나, cron으로 .sh 스크립트를 실행한 경우에 로그 파일을 읽는데에 어려움을 겪는 문제가 발생하여 자동화가 어려움.
+- `awk`, `jq` 등을 활용해 Slack Webhook으로 전송 가능
+- 장점: 구조화된 출력, 보고서/배치 처리에 적합
+- 단점: **실시간 알림 불가** (스크립트를 주기적으로 실행해야 함)
+<img width="1292" height="280" alt="image" src="https://github.com/user-attachments/assets/41fa66b9-60c1-48b8-9bfc-f4cee309cf46" />
+
+
+### 🔹 tail 방식 (최종 적용)
+
+```bash
+tail -Fn0 /var/log/audit/audit.log | while read line; do ... done
+
+```
+
+- `/var/log/audit/audit.log` 파일을 **실시간 스트리밍**으로 감시
+- 발생 즉시 Slack Webhook으로 전송 가능
+- 장점: **실시간 알림 가능**
+- 단점: JSON 파싱이나 데이터 구조화가 어려움 (문자열 처리 위주)
+ <img width="533" height="101" alt="image" src="https://github.com/user-attachments/assets/39f1c91b-7c0f-4aa5-913c-d1b665fe8bb8" />
+
+
+
+## 최종 구현 (tail 방식)
+
+### 규칙 설정
+
+```bash
+sudo auditctl -D
+sudo auditctl -a always,exit -F arch=b64 -S open,openat,creat \
+     -F exit=-EACCES -F auid=1001 -k user01-denied
+
+```
+
+### Slack Webhook 스크립트
+
+`/home/ubuntu/audit/auditd-slack.sh`
+
+```bash
+#!/bin/bash
+SLACK_WEBHOOK="https://hooks.slack.com/services/AAA/BBB/CCC"
+COUNT_FILE="/tmp/user01_denied_count"
+[ -f $COUNT_FILE ] || echo 0 > $COUNT_FILE
+
+tail -Fn0 /var/log/audit/audit.log | while read line; do
+    # Permission denied (exit=-13) + user01 (auid=1001) 체크
+    if echo "$line" | grep -q 'exit=-13' && echo "$line" | grep -q 'auid=1001'; then
+        COUNT=$(cat $COUNT_FILE)
+        COUNT=$((COUNT+1))
+        echo $COUNT > $COUNT_FILE
+        echo "DEBUG: count=$COUNT"
+
+        if [ $COUNT -ge 5 ]; then
+            echo "DEBUG: Sending Slack alert..."
+            PAYLOAD='{"text":":rotating_light: user01 had 5 permission denied events!"}'
+            curl -s -X POST -H 'Content-type: application/json' \
+                 --data "$PAYLOAD" $SLACK_WEBHOOK
+            echo 0 > $COUNT_FILE
+        fi
+    fi
+done
+
+```
+### tail 결과
+<img width="533" height="101" alt="image" src="https://github.com/user-attachments/assets/d27f7a4e-b2e4-4c7c-b615-e13b6774ae3f" />
+
+
+### systemd 서비스 등록
+
+```
+[Unit]
+Description=Auditd Slack Forwarder for user01
+
+[Service]
+ExecStart=/home/ubuntu/audit/auditd-slack.sh
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+
+```
+
+적용:
+
+```bash
+sudo systemctl daemon-reload
+sudo systemctl enable --now auditd-slack.service
+journalctl -u auditd-slack.service -f
+
+```
+
+
+
+
+
+
 ## 🛠️ **트러블슈팅**
 ### ❗ 문제: 다른 사용자 로그가 보이지 않음
 - **원인**: `auth.log`에는 일부 인증 관련 로그만 남고, 파일 접근 실패는 기록되지 않음
@@ -200,8 +307,14 @@ sudo auditctl -w /shared_dir/poem.txt -p rwxa -k denied_test
 ausearch -k denied_test
 ```
 ---
+### ❗ 문제: Slack에 알람이 오지 않는 문제
+- **원인**: cron은 이미 저장되어있는 로그에서 확인하여 알람을 주어야하는 역할을 맞게 되었는데, 로그를 읽지 못하는 문제가 발생함
+- **해결**: 모니터링 방법을 바꿔서 정기적인 보고서가 아닌 실시간 알림으로 이벤트 추적
 
-
+설정 예시:
+```bash
+tail -Fn0 /var/log/audit/audit.log | while read line; do
+```
 
 
 
